@@ -146,7 +146,7 @@ forms.sp01.addEventListener("submit", async e => {
   doc.text("Purchase Indent for NON-CONSUMABLE ITEMS from Institute Grant", L, 44);
   doc.setFont("times", "italic"); doc.setFontSize(10);
   doc.text("(Use a separate sheet for each of the new Equipments)", L, 50);
-  doc.text("Request Number: IITJ/NC/" + (v("request_no") || "____"), L, 58);
+  doc.text("Request Number: IITJ/NC/____", L, 58);
 
   const rows = [];
   const item = (n, q, a) => {
@@ -239,7 +239,7 @@ forms.sp02.addEventListener("submit", async e => {
   doc.text("Purchase Indent for CONSUMABLE ITEMS from Institute Grant", L, 42);
   doc.setFont("times", "italic"); doc.setFontSize(10);
   doc.text("(Consumable Items to be bought for purposes other than for Research)", L, 48);
-  doc.text(`Unique Number: IITJ/C/${v("uniq1") || "____"}/${v("uniq2") || "_____"}`, L, 56);
+  doc.text("Unique Number: IITJ/C/____/_____", L, 56);
 
   // Budget Head: plain bold text, right-aligned (no box)
   doc.setFont("times", "bold"); doc.setFontSize(11);
@@ -269,11 +269,11 @@ forms.sp02.addEventListener("submit", async e => {
      { content: "Amount (Rs.)", styles: { fontStyle: "italic" } }],
     ...items.map(r => r.map(c => ({ content: c, styles: { minCellHeight: 7 } }))),
     [{ content: "5", styles: { halign: "center" } }, "Budget Head",
-      span3(`${box(v("s2_5") === "Institute Head")} Institute Head                    ${box(v("s2_5") === "Department Head")} Department Head`)],
+      span3(`${box(true)} Institute Head                    ${box(false)} Department Head`)],
     [{ content: "6", styles: { halign: "center" } }, "Estimated Cost (Rs.), INCLUDING Taxes and Delivery", span3(v("s2_6"))],
     [{ content: "7", styles: { halign: "center" } }, "Justification for purchase",
-      span3(`${box(v("s2_7") === "Teaching Only")} Teaching Only                    Course Number(s): ${v("s2_7_course")}\n`
-          + `${box(v("s2_7") === "Other than Research")} Other than Research        Specify: ${v("s2_7_specify") || "_______________________"}`)]
+      span3(`${box(false)} Teaching Only                    Course Number(s):\n`
+          + `${box(false)} Other than Research        Specify: _______________________`)]
   ];
 
   doc.autoTable({
