@@ -33,14 +33,11 @@
       width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:4px;
       font: inherit; background:#fff;
     }
-    textarea { min-height:70px; resize:vertical; }
+    textarea { min-height:90px; resize:vertical; }
     input:focus, textarea:focus, select:focus { outline:2px solid var(--accent); outline-offset:-1px; }
     .row { display:flex; gap:12px; flex-wrap:wrap; }
     .row > * { flex:1 1 180px; }
-    label.opt { display:inline-flex; align-items:center; gap:6px; margin:4px 16px 4px 0; font-size:15px; }
     .small { font-size:14px; margin-bottom:4px; display:block; }
-    .infra { display:grid; grid-template-columns: 170px 1fr; gap:8px 12px; align-items:center; }
-    .infra label { display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; }
     .items { display:grid; grid-template-columns: 1fr 110px 130px; gap:8px; }
     .items .h { font-size:13px; font-style:italic; color:#555; }
     .linkbtn { background:none; border:1px solid var(--accent); color:var(--accent); padding:6px 14px;
@@ -50,7 +47,7 @@
     button.go:hover { filter:brightness(1.12); }
     .note { font-size:13px; color:#555; margin-top:10px; }
     @media (max-width:560px){ header{flex-direction:column; align-items:flex-start;} .hdr-text{text-align:left;}
-      .infra{grid-template-columns:1fr;} .items{grid-template-columns:1fr 80px 100px;} select{min-width:0; width:100%;} }
+      .items{grid-template-columns:1fr 80px 100px;} select{min-width:0; width:100%;} }
   </style>
 </head>
 <body>
@@ -76,23 +73,14 @@
     <h1>Purchase Indent for NON-CONSUMABLE ITEMS from Institute Grant</h1>
     <p class="sub">(Use a separate sheet for each of the new Equipments)</p>
 
-    <fieldset><legend><span class="n">1</span>Name of Indenter</legend><input type="text" name="f1"></fieldset>
+    <fieldset><legend><span class="n">1</span>Name of Indenter</legend>
+      <input type="text" name="f1" required>
+      <p class="hint">Also printed as the Faculty Mentor in the signature block and page footers.</p>
+    </fieldset>
     <fieldset><legend><span class="n">2</span>Personal File Number of Indenter</legend><input type="text" name="f2"></fieldset>
     <fieldset><legend><span class="n">3</span>Name of Department</legend><input type="text" name="f3"></fieldset>
     <fieldset><legend><span class="n">4</span>Name of the Equipment requested</legend><input type="text" name="f4"></fieldset>
     <fieldset><legend><span class="n">5</span>How many (number) of the said equipment are required to be purchased</legend><input type="text" name="f5"></fieldset>
-    <fieldset><legend><span class="n">6</span>In how much time (Weeks) is the equipment needed?</legend><input type="text" name="f6"></fieldset>
-
-    <fieldset><legend><span class="n">7</span>Proposed Mode of Purchase</legend>
-      <label class="opt"><input type="radio" name="f7" value="Direct Purchase"> Direct Purchase</label>
-      <label class="opt"><input type="radio" name="f7" value="Limited Tender"> Limited Tender</label>
-      <label class="opt"><input type="radio" name="f7" value="Open Tender"> Open Tender</label>
-      <label class="opt"><input type="radio" name="f7" value="Global Tender"> Global Tender</label>
-      <label class="opt"><input type="radio" name="f7" value="Rate Contract"> Rate Contract</label>
-      <label class="opt"><input type="radio" name="f7" value="Repeat Order"> Repeat Order</label>
-      <label class="opt"><input type="radio" name="f7" value="Other"> Other (Specify)</label>
-      <input type="text" name="f7_other" placeholder="If other, specify" style="margin-top:6px">
-    </fieldset>
 
     <fieldset><legend><span class="n">8</span>Estimated Cost (Approximate) (Rs.), including delivery of the Equipment at site</legend>
       <div class="row">
@@ -103,51 +91,17 @@
       <p class="hint">Total fills automatically from the two values above; you can overwrite it.</p>
     </fieldset>
 
-    <fieldset><legend><span class="n">9</span>Annual Running Cost (Rs.), EXCLUDING Taxes</legend><input type="text" name="f9"></fieldset>
-    <fieldset><legend><span class="n">10</span>Annual Maintenance Cost (Rs.), EXCLUDING Taxes</legend><input type="text" name="f10"></fieldset>
     <fieldset><legend><span class="n">11</span>Budget Head under which this is being booked</legend><input type="text" name="f11"></fieldset>
-    <fieldset><legend><span class="n">12</span>Expected warranty period of the Equipment</legend><input type="text" name="f12"></fieldset>
-    <fieldset><legend><span class="n">13</span>Is the equipment already available in the Institute, even if of a lower specification? If YES, can that equipment be used instead?</legend><textarea name="f13a"></textarea></fieldset>
-    <fieldset><legend><span class="n">13</span>If the cost is more than Rs. 50 Lakhs, does any other IIT or IISER have this facility? If yes, provide feedback on its functioning and usefulness.</legend><textarea name="f13b"></textarea></fieldset>
 
     <fieldset><legend><span class="n">14</span>Technical Specifications of the Equipment</legend>
       <p class="hint">Use only generic technical statements, without any bias towards any specific product or vendor.</p>
       <textarea name="f14"></textarea></fieldset>
 
-    <fieldset><legend><span class="n">15</span>Justification for the purchase of the Equipment requested</legend>
-      <label class="opt"><input type="radio" name="f15_type" value="Teaching Only"> Teaching Only</label>
-      <label class="opt"><input type="radio" name="f15_type" value="Research Only"> Research Only</label>
-      <label class="opt"><input type="radio" name="f15_type" value="Teaching and Research"> Teaching and Research</label>
-      <label class="opt"><input type="radio" name="f15_type" value="Others"> Others (Specify)</label>
-      <span class="small" style="margin-top:8px">Course Number(s)</span><input type="text" name="f15_course">
-      <span class="small" style="margin-top:8px">Faculty Members who will use it (signatures are added by hand)</span><textarea name="f15_faculty"></textarea>
-      <span class="small" style="margin-top:8px">Faculty Members of Other Departments who will use it</span><textarea name="f15_other_faculty"></textarea>
-      <span class="small" style="margin-top:8px">Others (Specify)</span><input type="text" name="f15_others">
-    </fieldset>
-
     <fieldset><legend><span class="n">16</span>Expected useful life (in years) of the equipment</legend>
       <p class="hint">How quickly will this equipment become obsolete?</p><input type="text" name="f16"></fieldset>
-    <fieldset><legend><span class="n">17</span>Spare Parts and ancillary items needed. Is their cost included in the response at (11) above?</legend><textarea name="f17"></textarea></fieldset>
-
-    <fieldset><legend><span class="n">18</span>Space Required to house the Equipment</legend>
-      <span class="small">Area</span><input type="text" name="f18_area">
-      <span class="small" style="margin-top:8px">Location</span><input type="text" name="f18_loc">
-      <span class="small" style="margin-top:8px">Alterations (if changes are required in existing space)</span><input type="text" name="f18_alt">
-      <p class="hint">Attach a drawing of the layout at the proposed location of the equipment.</p>
-    </fieldset>
-
-    <fieldset><legend><span class="n">19</span>Basic Details of the Equipment</legend>
-      <span class="small">Dimensions</span><input type="text" name="f19_dim">
-      <span class="small" style="margin-top:8px">Weight</span><input type="text" name="f19_wt">
-      <span class="small" style="margin-top:8px">Vibration (level, with range of operational frequencies)</span><input type="text" name="f19_vib">
-    </fieldset>
-
-    <fieldset><legend><span class="n">20</span>Special infrastructure requirements for this equipment</legend>
-      <div class="infra" id="infra"></div>
-    </fieldset>
 
     <button class="go" type="submit">Generate SP01 PDF</button>
-    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. The office-use sections and signature lines are printed as on the original form.</p>
+    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. All other items, the office-use sections and the signature lines are printed blank or as on the original form.</p>
   </form>
 
   <!-- ===================================================== SP02 -->
@@ -161,7 +115,10 @@
       <p class="hint">The line “Academic, Career &amp; Technology Council” is printed below it automatically.</p>
     </fieldset>
 
-    <fieldset><legend><span class="n">1</span>Name of Indenter</legend><input type="text" name="s2_1"></fieldset>
+    <fieldset><legend><span class="n">1</span>Name of Indenter</legend>
+      <input type="text" name="s2_1" required>
+      <p class="hint">Also printed as the Faculty Mentor in the signature block.</p>
+    </fieldset>
     <fieldset><legend><span class="n">2</span>Personal File Number</legend><input type="text" name="s2_2"></fieldset>
     <fieldset><legend><span class="n">3</span>Name of Department</legend><input type="text" name="s2_3"></fieldset>
 
@@ -177,7 +134,7 @@
       <input type="text" name="s2_6"></fieldset>
 
     <button class="go" type="submit">Generate SP02 PDF</button>
-    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. The office-use section and signature lines are printed as on the original form.</p>
+    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. Budget Head (item 5) is printed as Institute Head; justification, the office-use section and the signature lines are printed as on the original form.</p>
   </form>
 </div>
 
