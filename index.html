@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Purchase Indents – IIT Jodhpur</title>
+  <style>
+    :root { --ink:#1a1a1a; --line:#c9c9c9; --accent:#1f3a6e; --bg:#f5f6f8; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: Georgia, "Palatino Linotype", serif; color:var(--ink); background:var(--bg); }
+    .wrap { max-width: 820px; margin: 0 auto; padding: 24px 16px 64px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    header img { height:70px; }
+    .hdr-text { text-align:right; font-family: Helvetica, Arial, sans-serif; }
+    .hdr-text .inst { font-size:15px; }
+    .hdr-text .office { font-size:20px; font-weight:700; }
+    .picker { margin:22px 0 6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      font-family: Helvetica, Arial, sans-serif; }
+    .picker label { font-weight:700; }
+    select { font: 16px Helvetica, Arial, sans-serif; padding:9px 12px; border:1px solid var(--line);
+      border-radius:6px; background:#fff; min-width:320px; max-width:100%; }
+    h1 { font-size:20px; margin:18px 0 2px; }
+    .sub { font-style:italic; margin:0 0 16px; }
+    form { background:#fff; border:1px solid var(--line); border-radius:8px; padding:8px 20px 24px; }
+    form[hidden] { display:none; }
+    fieldset { border:0; border-bottom:1px solid var(--line); margin:0; padding:16px 0; }
+    fieldset:last-of-type { border-bottom:0; }
+    legend { font-weight:700; padding:0; margin-bottom:6px; float:left; width:100%; }
+    legend .n { color:var(--accent); margin-right:8px; }
+    legend + * { clear:both; }
+    .hint { font-size:13px; font-style:italic; color:#555; margin:2px 0 8px; }
+    input[type=text], input[type=number], textarea {
+      width:100%; padding:8px 10px; border:1px solid var(--line); border-radius:4px;
+      font: inherit; background:#fff;
+    }
+    textarea { min-height:70px; resize:vertical; }
+    input:focus, textarea:focus, select:focus { outline:2px solid var(--accent); outline-offset:-1px; }
+    .row { display:flex; gap:12px; flex-wrap:wrap; }
+    .row > * { flex:1 1 180px; }
+    label.opt { display:inline-flex; align-items:center; gap:6px; margin:4px 16px 4px 0; font-size:15px; }
+    .small { font-size:14px; margin-bottom:4px; display:block; }
+    .infra { display:grid; grid-template-columns: 170px 1fr; gap:8px 12px; align-items:center; }
+    .infra label { display:flex; align-items:center; gap:8px; font-weight:600; font-size:15px; }
+    .items { display:grid; grid-template-columns: 1fr 110px 130px; gap:8px; }
+    .items .h { font-size:13px; font-style:italic; color:#555; }
+    .linkbtn { background:none; border:1px solid var(--accent); color:var(--accent); padding:6px 14px;
+      font: 600 14px Helvetica, Arial, sans-serif; border-radius:6px; cursor:pointer; margin:10px 8px 0 0; }
+    button.go { margin-top:20px; background:var(--accent); color:#fff; border:0; border-radius:6px;
+      padding:12px 28px; font: 600 16px Helvetica, Arial, sans-serif; cursor:pointer; }
+    button.go:hover { filter:brightness(1.12); }
+    .note { font-size:13px; color:#555; margin-top:10px; }
+    @media (max-width:560px){ header{flex-direction:column; align-items:flex-start;} .hdr-text{text-align:left;}
+      .infra{grid-template-columns:1fr;} .items{grid-template-columns:1fr 80px 100px;} select{min-width:0; width:100%;} }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="iitj_logo.png" alt="IIT Jodhpur logo">
+    <div class="hdr-text">
+      <div class="inst">Indian Institute of Technology Jodhpur</div>
+      <div class="office">Office of Stores and Purchase</div>
+    </div>
+  </header>
+
+  <div class="picker">
+    <label for="formType">Select form</label>
+    <select id="formType">
+      <option value="sp01">SP01 – Non-Consumable Items</option>
+      <option value="sp02">SP02 – Consumable Items</option>
+    </select>
+  </div>
+
+  <!-- ===================================================== SP01 -->
+  <form id="sp01" autocomplete="off">
+    <h1>Purchase Indent for NON-CONSUMABLE ITEMS from Institute Grant</h1>
+    <p class="sub">(Use a separate sheet for each of the new Equipments)</p>
+
+    <fieldset>
+      <legend>Request Number</legend>
+      <div class="row" style="align-items:center"><span style="flex:0 0 auto">IITJ/NC/</span><input type="text" name="request_no" placeholder="number"></div>
+    </fieldset>
+
+    <fieldset><legend><span class="n">1</span>Name of Indenter</legend><input type="text" name="f1"></fieldset>
+    <fieldset><legend><span class="n">2</span>Personal File Number of Indenter</legend><input type="text" name="f2"></fieldset>
+    <fieldset><legend><span class="n">3</span>Name of Department</legend><input type="text" name="f3"></fieldset>
+    <fieldset><legend><span class="n">4</span>Name of the Equipment requested</legend><input type="text" name="f4"></fieldset>
+    <fieldset><legend><span class="n">5</span>How many (number) of the said equipment are required to be purchased</legend><input type="text" name="f5"></fieldset>
+    <fieldset><legend><span class="n">6</span>In how much time (Weeks) is the equipment needed?</legend><input type="text" name="f6"></fieldset>
+
+    <fieldset><legend><span class="n">7</span>Proposed Mode of Purchase</legend>
+      <label class="opt"><input type="radio" name="f7" value="Direct Purchase"> Direct Purchase</label>
+      <label class="opt"><input type="radio" name="f7" value="Limited Tender"> Limited Tender</label>
+      <label class="opt"><input type="radio" name="f7" value="Open Tender"> Open Tender</label>
+      <label class="opt"><input type="radio" name="f7" value="Global Tender"> Global Tender</label>
+      <label class="opt"><input type="radio" name="f7" value="Rate Contract"> Rate Contract</label>
+      <label class="opt"><input type="radio" name="f7" value="Repeat Order"> Repeat Order</label>
+      <label class="opt"><input type="radio" name="f7" value="Other"> Other (Specify)</label>
+      <input type="text" name="f7_other" placeholder="If other, specify" style="margin-top:6px">
+    </fieldset>
+
+    <fieldset><legend><span class="n">8</span>Estimated Cost (Approximate) (Rs.), including delivery of the Equipment at site</legend>
+      <div class="row">
+        <div><span class="small">Cost of Equipment (Rs.)</span><input type="number" name="f8_cost" id="cost" min="0" step="any"></div>
+        <div><span class="small">Cost of ALL Taxes (Rs.)</span><input type="number" name="f8_tax" id="tax" min="0" step="any"></div>
+        <div><span class="small">TOTAL COST (Rs.)</span><input type="number" name="f8_total" id="total" min="0" step="any"></div>
+      </div>
+      <p class="hint">Total fills automatically from the two values above; you can overwrite it.</p>
+    </fieldset>
+
+    <fieldset><legend><span class="n">9</span>Annual Running Cost (Rs.), EXCLUDING Taxes</legend><input type="text" name="f9"></fieldset>
+    <fieldset><legend><span class="n">10</span>Annual Maintenance Cost (Rs.), EXCLUDING Taxes</legend><input type="text" name="f10"></fieldset>
+    <fieldset><legend><span class="n">11</span>Budget Head under which this is being booked</legend><input type="text" name="f11"></fieldset>
+    <fieldset><legend><span class="n">12</span>Expected warranty period of the Equipment</legend><input type="text" name="f12"></fieldset>
+    <fieldset><legend><span class="n">13</span>Is the equipment already available in the Institute, even if of a lower specification? If YES, can that equipment be used instead?</legend><textarea name="f13a"></textarea></fieldset>
+    <fieldset><legend><span class="n">13</span>If the cost is more than Rs. 50 Lakhs, does any other IIT or IISER have this facility? If yes, provide feedback on its functioning and usefulness.</legend><textarea name="f13b"></textarea></fieldset>
+
+    <fieldset><legend><span class="n">14</span>Technical Specifications of the Equipment</legend>
+      <p class="hint">Use only generic technical statements, without any bias towards any specific product or vendor.</p>
+      <textarea name="f14"></textarea></fieldset>
+
+    <fieldset><legend><span class="n">15</span>Justification for the purchase of the Equipment requested</legend>
+      <label class="opt"><input type="radio" name="f15_type" value="Teaching Only"> Teaching Only</label>
+      <label class="opt"><input type="radio" name="f15_type" value="Research Only"> Research Only</label>
+      <label class="opt"><input type="radio" name="f15_type" value="Teaching and Research"> Teaching and Research</label>
+      <label class="opt"><input type="radio" name="f15_type" value="Others"> Others (Specify)</label>
+      <span class="small" style="margin-top:8px">Course Number(s)</span><input type="text" name="f15_course">
+      <span class="small" style="margin-top:8px">Faculty Members who will use it (signatures are added by hand)</span><textarea name="f15_faculty"></textarea>
+      <span class="small" style="margin-top:8px">Faculty Members of Other Departments who will use it</span><textarea name="f15_other_faculty"></textarea>
+      <span class="small" style="margin-top:8px">Others (Specify)</span><input type="text" name="f15_others">
+    </fieldset>
+
+    <fieldset><legend><span class="n">16</span>Expected useful life (in years) of the equipment</legend>
+      <p class="hint">How quickly will this equipment become obsolete?</p><input type="text" name="f16"></fieldset>
+    <fieldset><legend><span class="n">17</span>Spare Parts and ancillary items needed. Is their cost included in the response at (11) above?</legend><textarea name="f17"></textarea></fieldset>
+
+    <fieldset><legend><span class="n">18</span>Space Required to house the Equipment</legend>
+      <span class="small">Area</span><input type="text" name="f18_area">
+      <span class="small" style="margin-top:8px">Location</span><input type="text" name="f18_loc">
+      <span class="small" style="margin-top:8px">Alterations (if changes are required in existing space)</span><input type="text" name="f18_alt">
+      <p class="hint">Attach a drawing of the layout at the proposed location of the equipment.</p>
+    </fieldset>
+
+    <fieldset><legend><span class="n">19</span>Basic Details of the Equipment</legend>
+      <span class="small">Dimensions</span><input type="text" name="f19_dim">
+      <span class="small" style="margin-top:8px">Weight</span><input type="text" name="f19_wt">
+      <span class="small" style="margin-top:8px">Vibration (level, with range of operational frequencies)</span><input type="text" name="f19_vib">
+    </fieldset>
+
+    <fieldset><legend><span class="n">20</span>Special infrastructure requirements for this equipment</legend>
+      <div class="infra" id="infra"></div>
+    </fieldset>
+
+    <button class="go" type="submit">Generate SP01 PDF</button>
+    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. The office-use sections and signature lines are printed as on the original form.</p>
+  </form>
+
+  <!-- ===================================================== SP02 -->
+  <form id="sp02" autocomplete="off" hidden>
+    <h1>Purchase Indent for CONSUMABLE ITEMS from Institute Grant</h1>
+    <p class="sub">(Consumable Items to be bought for purposes other than for Research)</p>
+
+    <fieldset>
+      <legend>Unique Number</legend>
+      <div class="row" style="align-items:center">
+        <span style="flex:0 0 auto">IITJ/C/</span>
+        <input type="text" name="uniq1" style="max-width:140px">
+        <span style="flex:0 0 auto">/</span>
+        <input type="text" name="uniq2" style="max-width:160px">
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Budget Head <span style="font-weight:400">(printed at the top right)</span></legend>
+      <input type="text" name="s2_bh_top">
+      <p class="hint">The line “Academic, Career &amp; Technology Council” is printed below it automatically.</p>
+    </fieldset>
+
+    <fieldset><legend><span class="n">1</span>Name of Indenter</legend><input type="text" name="s2_1"></fieldset>
+    <fieldset><legend><span class="n">2</span>Personal File Number</legend><input type="text" name="s2_2"></fieldset>
+    <fieldset><legend><span class="n">3</span>Name of Department</legend><input type="text" name="s2_3"></fieldset>
+
+    <fieldset><legend>Items</legend>
+      <div class="items" id="items2">
+        <div class="h">Item</div><div class="h">Quantity</div><div class="h">Amount (Rs.)</div>
+      </div>
+      <button type="button" class="linkbtn" id="addItem">+ Add row</button>
+      <button type="button" class="linkbtn" id="removeItem">− Remove last row</button>
+    </fieldset>
+
+    <fieldset><legend><span class="n">5</span>Budget Head</legend>
+      <label class="opt"><input type="radio" name="s2_5" value="Institute Head"> Institute Head</label>
+      <label class="opt"><input type="radio" name="s2_5" value="Department Head"> Department Head</label>
+    </fieldset>
+
+    <fieldset><legend><span class="n">6</span>Estimated Cost (Rs.), INCLUDING Taxes and Delivery</legend>
+      <input type="text" name="s2_6"></fieldset>
+
+    <fieldset><legend><span class="n">7</span>Justification for purchase</legend>
+      <label class="opt"><input type="radio" name="s2_7" value="Teaching Only"> Teaching Only</label>
+      <label class="opt"><input type="radio" name="s2_7" value="Other than Research"> Other than Research</label>
+      <span class="small" style="margin-top:8px">Course Number(s)</span><input type="text" name="s2_7_course">
+      <span class="small" style="margin-top:8px">Specify</span><input type="text" name="s2_7_specify">
+    </fieldset>
+
+    <button class="go" type="submit">Generate SP02 PDF</button>
+    <p class="note">Everything runs in your browser. Nothing is uploaded or stored. The office-use section and signature lines are printed as on the original form.</p>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
