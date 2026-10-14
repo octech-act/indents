@@ -181,7 +181,7 @@ forms.sp01.addEventListener("submit", async e => {
   item(8, "Estimated Cost (Approximate) (Rs.) of the Equipment, including delivery of the Equipment at site", costTxt);
   item(9, "What is the Annual Running Cost (Rs.), EXCLUDING Taxes?", "");
   item(10, "What is the Annual Maintenance Cost (Rs.), EXCLUDING Taxes?", "");
-  item(11, "What is Budget Head under which this is being booked?", v("f11"));
+  item(11, "What is Budget Head under which this is being booked?", "Academic, Career & Technology Council");
   item(12, "What the expected warranty period of the Equipment?", "");
   item(13, "Is the equipment already available in the Institute, even if of a lower specification? If YES, can that equipment be used instead?", "");
   item(13, "If the cost of the Equipment is more than Rs. 50 Lakhs, does any other IIT or IISER have this facility? If yes, please provide the feedback on its functioning and usefulness?", "\n\n");
