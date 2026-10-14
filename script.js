@@ -3,22 +3,13 @@
 const L = 20, R = 190, W = R - L;
 const box = on => (on ? "[X]" : "[  ]");
 const val = (fd, k) => (fd.get(k) || "").toString().trim();
+const PLACEHOLDER = "(Name of indenter)";
 
 /* =============================================================== UI */
 const picker = document.getElementById("formType");
 const forms = { sp01: document.getElementById("sp01"), sp02: document.getElementById("sp02") };
 picker.addEventListener("change", () => {
   Object.entries(forms).forEach(([k, f]) => (f.hidden = k !== picker.value));
-});
-
-// SP01: infrastructure checklist
-const INFRA = ["Power", "Water", "Sound Resistance", "Illumination", "Radiation",
-               "Gas", "Temperature", "AC System", "Dust", "Others (Specify)"];
-const infraBox = document.getElementById("infra");
-INFRA.forEach((name, i) => {
-  infraBox.insertAdjacentHTML("beforeend",
-    `<label><input type="checkbox" name="infra_${i}"> ${name}</label>
-     <input type="text" name="infra_${i}_val" placeholder="Details">`);
 });
 
 // SP01: auto-total
@@ -36,9 +27,9 @@ let itemCount = 0;
 function addItemRow() {
   const i = itemCount++;
   itemsBox.insertAdjacentHTML("beforeend",
-    `<input type="text" name="item_${i}" data-row="${i}">
-     <input type="text" name="qty_${i}" data-row="${i}">
-     <input type="text" name="amt_${i}" data-row="${i}">`);
+    `<input type="text" name="item_${i}">
+     <input type="text" name="qty_${i}">
+     <input type="text" name="amt_${i}">`);
 }
 function removeItemRow() {
   if (itemCount <= 1) return;
@@ -67,7 +58,7 @@ function loadImage(src) {
 async function drawHeader(doc, formName) {
   const logo = await loadImage("iitj_logo.png");
   if (logo) {
-    const w = 18, h = w * (logo.h / logo.w);
+    const w = 16, h = w * (logo.h / logo.w);
     doc.addImage(logo.data, "PNG", L, 11, w, h);
   }
   doc.setFont("helvetica", "normal"); doc.setFontSize(11);
@@ -78,15 +69,23 @@ async function drawHeader(doc, formName) {
   doc.text("Form: " + formName, R, 29, { align: "right" });
 }
 
-function addPageNumbers(doc) {
+// Page numbers (centre) and, optionally, the Faculty Mentor footer (left, small)
+// on every page except those listed in skipMentor.
+function addFooters(doc, mentor, skipMentor) {
   const pageW = doc.internal.pageSize.getWidth();
   const n = doc.internal.getNumberOfPages();
   for (let i = 1; i <= n; i++) {
     doc.setPage(i);
     doc.setFont("helvetica", "bold"); doc.setFontSize(8);
     doc.text(String(i), pageW / 2, 289, { align: "center" });
+    if (mentor !== null && !skipMentor.has(i)) {
+      doc.setFont("helvetica", "normal"); doc.setFontSize(7);
+      doc.text("Faculty Mentor: " + mentor, L, 289);
+    }
   }
 }
+
+const curPage = doc => doc.internal.getCurrentPageInfo().pageNumber;
 
 // Static "for the use of ..." box: no inputs, printed as on the original form
 function officeBox(doc, ctx, title, qs, signL, signR) {
@@ -132,11 +131,14 @@ const INFRA_QS = [
   ["3. Is it possible to provide the special infrastructure requirements as sought for housing the proposed equipment?", ""],
   ["4. Can the equipment be installed in the requested floor without affecting the structural safety of the building, and without reducing the functional efficiency of the space and the rest of the building?", ""]
 ];
+const INFRA = ["Power", "Water", "Sound Resistance", "Illumination", "Radiation",
+               "Gas", "Temperature", "AC System", "Dust", "Others (Specify)"];
 
 /* =============================================================== SP01 */
 forms.sp01.addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), v = k => val(fd, k);
+  const mentor = v("f1") || PLACEHOLDER;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
@@ -149,47 +151,48 @@ forms.sp01.addEventListener("submit", async e => {
   doc.text("Request Number: IITJ/NC/____", L, 58);
 
   const rows = [];
-  const item = (n, q, a) => {
+  const item = (n, q, a, qStyle) => {
     rows.push([{ content: String(n), rowSpan: 2, styles: { halign: "center", fontStyle: "bold" } },
                { content: q, styles: { fontStyle: "bold" } }]);
     rows.push([{ content: a || " ", styles: { minCellHeight: 10 } }]);
   };
 
-  const modes = ["Direct Purchase", "Limited Tender", "Open Tender", "Global Tender", "Rate Contract", "Repeat Order", "Other"];
-  const modeTxt = modes.map(m => `${box(v("f7") === m)} ${m === "Other" ? "Other (Specify)" : m}`).join("    ")
-                  + (v("f7_other") ? `\nOther: ${v("f7_other")}` : "");
+  const modeTxt = ["Direct Purchase", "Limited Tender", "Open Tender", "Global Tender",
+                   "Rate Contract", "Repeat Order", "Other (Specify)"].map(m => `${box(false)} ${m}`).join("    ");
   const money = k => (v(k) ? "Rs. " + v(k) : "");
   const costTxt = `Cost of Equipment : ${money("f8_cost")}\nCost of ALL Taxes : ${money("f8_tax")}\nTOTAL COST : ${money("f8_total")}`;
-  const types = ["Teaching Only", "Research Only", "Teaching and Research", "Others"];
-  const justTxt = types.map(t => `${box(v("f15_type") === t)} ${t}${t === "Others" ? " (Specify)" : ""}`).join("    ")
-    + `\n\nCourse Number(s): ${v("f15_course")}`
-    + `\n\nFaculty Members who will use it, and their signatures:\n${v("f15_faculty")}`
-    + `\n\nFaculty Members of the Other Departments who will use it, and their signatures:\n${v("f15_other_faculty")}`
-    + `\n\nOthers (Specify): ${v("f15_others")}`;
-  const infraTxt = INFRA.map((n, i) => `${box(fd.get("infra_" + i) !== null)} ${n}: ${v("infra_" + i + "_val")}`).join("\n");
+  const justTxt =
+    "   Teaching Only\n      Course Number(s)\n\n" +
+    "   Research Only\n      Names of Faculty Members who will use it, and their signatures\n\n" +
+    "      Names of Faculty Members of the Other Departments who will use it, and their signatures\n\n" +
+    "   Teaching and Research\n      Course Number(s)\n\n" +
+    "      Faculty Members who will use it, and their signatures\n\n" +
+    "      Faculty Members of the Other Departments who will use it, and their signatures\n\n" +
+    "   Others (Specify)\n";
+  const infraTxt = INFRA.map(n => `${box(false)} ${n}:`).join("\n");
 
   item(1, "Name of Indenter", v("f1"));
   item(2, "Personal File Number of Indenter", v("f2"));
   item(3, "Name of Department", v("f3"));
   item(4, "Name of the Equipment requested", v("f4"));
   item(5, "How many (number) of the said equipment are required to be purchased", v("f5"));
-  item(6, "In how much time (Weeks) is the equipment needed?", v("f6"));
+  item(6, "In how much time (Weeks) is the equipment needed?", "");
   item(7, "Proposed Mode of Purchase", modeTxt);
   item(8, "Estimated Cost (Approximate) (Rs.) of the Equipment, including delivery of the Equipment at site", costTxt);
-  item(9, "What is the Annual Running Cost (Rs.), EXCLUDING Taxes?", v("f9"));
-  item(10, "What is the Annual Maintenance Cost (Rs.), EXCLUDING Taxes?", v("f10"));
+  item(9, "What is the Annual Running Cost (Rs.), EXCLUDING Taxes?", "");
+  item(10, "What is the Annual Maintenance Cost (Rs.), EXCLUDING Taxes?", "");
   item(11, "What is Budget Head under which this is being booked?", v("f11"));
-  item(12, "What the expected warranty period of the Equipment?", v("f12"));
-  item(13, "Is the equipment already available in the Institute, even if of a lower specification? If YES, can that equipment be used instead?", v("f13a"));
-  item(13, "If the cost of the Equipment is more than Rs. 50 Lakhs, does any other IIT or IISER have this facility? If yes, please provide the feedback on its functioning and usefulness?", v("f13b"));
+  item(12, "What the expected warranty period of the Equipment?", "");
+  item(13, "Is the equipment already available in the Institute, even if of a lower specification? If YES, can that equipment be used instead?", "");
+  item(13, "If the cost of the Equipment is more than Rs. 50 Lakhs, does any other IIT or IISER have this facility? If yes, please provide the feedback on its functioning and usefulness?", "\n\n");
   item(14, "Technical Specifications of the Equipment (use only generic technical statements, without any bias towards any specific product or vendor)", v("f14"));
   item(15, "Justification for the purchase of the Equipment requested", justTxt);
   item(16, "What is the expected useful life (in years) of the equipment? How quickly will this equipment become obsolete?", v("f16"));
-  item(17, "What are the Spare Parts and ancillary items needed? Is the cost of the Spare Parts and ancillary items included in Response at (11) above?", v("f17"));
+  item(17, "What are the Spare Parts and ancillary items needed? Is the cost of the Spare Parts and ancillary items included in Response at (11) above?", "");
   item(18, "Space Required to house the Equipment",
-       `Area: ${v("f18_area")}\nLocation: ${v("f18_loc")}\nAlterations: ${v("f18_alt")}\n(ATTACH a Drawing of the Layout at the proposed location of the Equipment.)`);
+       "Area:\n\nLocation:\n\nAlterations: If changes are required in existing space, indicate the requirements.\n\n(ATTACH a Drawing of the Layout at the proposed location of the Equipment.)");
   item(19, "Basic Details of the Equipment",
-       `Dimensions: ${v("f19_dim")}\nWeight: ${v("f19_wt")}\nVibration: ${v("f19_vib")}\n(Indicate level of vibrations along with range of operational frequencies)`);
+       "Dimensions:\n\nWeight:\n\nVibration:\n\n(Indicate level of vibrations along with range of operational frequencies)");
   item(20, "What are the special infrastructure requirements for this equipment?", infraTxt);
 
   doc.autoTable({
@@ -204,25 +207,35 @@ forms.sp01.addEventListener("submit", async e => {
     rowPageBreak: "avoid"
   });
 
+  // Pages that carry a signature get no Faculty Mentor footer
+  const skip = new Set();
   const ctx = { y: doc.lastAutoTable.finalY + 10 };
-  if (ctx.y + 20 > 280) { doc.addPage(); ctx.y = 20; }
+
+  // Faculty Mentor / Associate Dean signatures, kept with the Accounts box
+  if (ctx.y + 12 + 60 > 280) { doc.addPage(); ctx.y = 20; }
+  skip.add(curPage(doc));
   doc.setFont("times", "bold"); doc.setFontSize(10);
-  doc.text("Head/Professor In-charge", R, ctx.y, { align: "right" });
-  doc.text("Office of Students", R, ctx.y + 5, { align: "right" });
-  ctx.y += 12;
+  doc.text(mentor, L, ctx.y);
+  doc.text("Faculty Mentor", L, ctx.y + 5);
+  doc.text("Dr. Pranay Ranjan", R, ctx.y, { align: "right" });
+  doc.text("Associate Dean (Student Affairs)", R, ctx.y + 5, { align: "right" });
+  ctx.y += 13;
 
   officeBox(doc, ctx, "For the use of Office of Accounts only", ACCOUNTS_SP01,
             "Dealing Assistant (Accounts)", "Superintendent (Accounts)");
   officeBox(doc, ctx, "For the use of Office of Infrastructure Engineering only", INFRA_QS,
             "Dealing Assistant (Accounts)", "Executive Engineer (Civil)");
 
+  // Approval + Dean
   if (ctx.y + 40 > 285) { doc.addPage(); ctx.y = 20; }
+  skip.add(curPage(doc));
   doc.setFont("times", "italic"); doc.setFontSize(11);
   doc.text("Approval of Competent Financial Authority", pageW / 2, ctx.y + 6, { align: "center" });
   doc.setFont("times", "bold"); doc.setFontSize(10);
-  doc.text("Dean (Student Affairs)", R, ctx.y + 28, { align: "right" });
+  doc.text("Dr. Rajlaxmi Chouhan", pageW / 2, ctx.y + 22, { align: "center" });
+  doc.text("Dean (Student Affairs)", pageW / 2, ctx.y + 27, { align: "center" });
 
-  addPageNumbers(doc);
+  addFooters(doc, mentor, skip);
   doc.save("SP01_Purchase_Indent.pdf");
 });
 
@@ -230,6 +243,7 @@ forms.sp01.addEventListener("submit", async e => {
 forms.sp02.addEventListener("submit", async e => {
   e.preventDefault();
   const fd = new FormData(e.target), v = k => val(fd, k);
+  const mentor = v("s2_1") || PLACEHOLDER;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: "mm", format: "a4" });
   const pageW = doc.internal.pageSize.getWidth();
@@ -246,14 +260,10 @@ forms.sp02.addEventListener("submit", async e => {
   doc.text("Budget Head: " + v("s2_bh_top"), R, 63, { align: "right" });
   doc.text("Academic, Career & Technology Council", R, 69, { align: "right" });
 
-  // Collect item rows (at least 5 shown)
+  // Item rows (at least 5 shown)
   const items = [];
-  for (let i = 0; i < itemCount; i++) {
-    const it = v("item_" + i), q = v("qty_" + i), a = v("amt_" + i);
-    items.push([it, q, a]);
-  }
+  for (let i = 0; i < itemCount; i++) items.push([v("item_" + i), v("qty_" + i), v("amt_" + i)]);
   while (items.length < 5) items.push(["", "", ""]);
-  // drop trailing fully-empty rows beyond 5
   while (items.length > 5 && items[items.length - 1].every(x => !x)) items.pop();
 
   const span3 = (content, extra) => ({ content, colSpan: 3, styles: Object.assign({ minCellHeight: 7 }, extra || {}) });
@@ -287,15 +297,15 @@ forms.sp02.addEventListener("submit", async e => {
   });
 
   const ctx = { y: doc.lastAutoTable.finalY + 12 };
-  if (ctx.y + 75 > 285) { doc.addPage(); ctx.y = 20; }
+  if (ctx.y + 80 > 285) { doc.addPage(); ctx.y = 20; }
 
-  // Signatures (static)
+  // Signatures: Faculty Mentor (the indenter) and Associate Dean
   doc.setFont("times", "italic"); doc.setFontSize(9);
-  doc.text("Faculty Mentor", L, ctx.y);
-  doc.text("Head", R, ctx.y, { align: "right" });
+  doc.text(mentor, L, ctx.y);
+  doc.text("Dr. Pranay Ranjan", R, ctx.y, { align: "right" });
   doc.setFont("times", "normal");
-  doc.text("Department of", L, ctx.y + 4.5);
-  doc.text("Department of Office of Students", R, ctx.y + 4.5, { align: "right" });
+  doc.text("Faculty Mentor", L, ctx.y + 4.5);
+  doc.text("Associate Dean (Student Affairs)", R, ctx.y + 4.5, { align: "right" });
 
   // Approval line (mixed normal + italic, centred)
   const a1 = "Approval of ", a2 = "Competent Financial Authority (if a Prior Approval is not available)";
@@ -307,12 +317,13 @@ forms.sp02.addEventListener("submit", async e => {
   doc.setFont("times", "italic"); doc.text(a2, x0 + w1, yA);
 
   doc.setFont("times", "normal"); doc.setFontSize(11);
-  doc.text("Dean (Student Affairs)", pageW / 2, yA + 14, { align: "center" });
-  ctx.y = yA + 24;
+  doc.text("Dr. Rajlaxmi Chouhan", pageW / 2, yA + 12, { align: "center" });
+  doc.text("Dean (Student Affairs)", pageW / 2, yA + 17, { align: "center" });
+  ctx.y = yA + 26;
 
   officeBox(doc, ctx, "For the use of Office of Accounts only", ACCOUNTS_SP02,
             "Dealing Assistant (Accounts)", "Superintendent (Accounts)");
 
-  addPageNumbers(doc);
+  addFooters(doc, null, new Set());
   doc.save("SP02_Purchase_Indent.pdf");
 });
