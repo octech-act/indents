@@ -76,11 +76,6 @@
     <h1>Purchase Indent for NON-CONSUMABLE ITEMS from Institute Grant</h1>
     <p class="sub">(Use a separate sheet for each of the new Equipments)</p>
 
-    <fieldset>
-      <legend>Request Number</legend>
-      <div class="row" style="align-items:center"><span style="flex:0 0 auto">IITJ/NC/</span><input type="text" name="request_no" placeholder="number"></div>
-    </fieldset>
-
     <fieldset><legend><span class="n">1</span>Name of Indenter</legend><input type="text" name="f1"></fieldset>
     <fieldset><legend><span class="n">2</span>Personal File Number of Indenter</legend><input type="text" name="f2"></fieldset>
     <fieldset><legend><span class="n">3</span>Name of Department</legend><input type="text" name="f3"></fieldset>
@@ -161,16 +156,6 @@
     <p class="sub">(Consumable Items to be bought for purposes other than for Research)</p>
 
     <fieldset>
-      <legend>Unique Number</legend>
-      <div class="row" style="align-items:center">
-        <span style="flex:0 0 auto">IITJ/C/</span>
-        <input type="text" name="uniq1" style="max-width:140px">
-        <span style="flex:0 0 auto">/</span>
-        <input type="text" name="uniq2" style="max-width:160px">
-      </div>
-    </fieldset>
-
-    <fieldset>
       <legend>Budget Head <span style="font-weight:400">(printed at the top right)</span></legend>
       <input type="text" name="s2_bh_top">
       <p class="hint">The line “Academic, Career &amp; Technology Council” is printed below it automatically.</p>
@@ -188,20 +173,8 @@
       <button type="button" class="linkbtn" id="removeItem">− Remove last row</button>
     </fieldset>
 
-    <fieldset><legend><span class="n">5</span>Budget Head</legend>
-      <label class="opt"><input type="radio" name="s2_5" value="Institute Head"> Institute Head</label>
-      <label class="opt"><input type="radio" name="s2_5" value="Department Head"> Department Head</label>
-    </fieldset>
-
     <fieldset><legend><span class="n">6</span>Estimated Cost (Rs.), INCLUDING Taxes and Delivery</legend>
       <input type="text" name="s2_6"></fieldset>
-
-    <fieldset><legend><span class="n">7</span>Justification for purchase</legend>
-      <label class="opt"><input type="radio" name="s2_7" value="Teaching Only"> Teaching Only</label>
-      <label class="opt"><input type="radio" name="s2_7" value="Other than Research"> Other than Research</label>
-      <span class="small" style="margin-top:8px">Course Number(s)</span><input type="text" name="s2_7_course">
-      <span class="small" style="margin-top:8px">Specify</span><input type="text" name="s2_7_specify">
-    </fieldset>
 
     <button class="go" type="submit">Generate SP02 PDF</button>
     <p class="note">Everything runs in your browser. Nothing is uploaded or stored. The office-use section and signature lines are printed as on the original form.</p>
