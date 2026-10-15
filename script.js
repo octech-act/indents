@@ -90,11 +90,10 @@ const curPage = doc => doc.internal.getCurrentPageInfo().pageNumber;
 // Static "for the use of ..." box: no inputs, printed as on the original form
 function officeBox(doc, ctx, title, qs, signL, signR) {
   const pageW = doc.internal.pageSize.getWidth();
-  const est = 14 + qs.length * 9 + 22;
-  if (ctx.y + est > 280) { doc.addPage(); ctx.y = 20; }
   doc.autoTable({
     startY: ctx.y,
-    margin: { left: L, right: pageW - R },
+    margin: { top: 20, left: L, right: pageW - R, bottom: 12 },
+    pageBreak: "avoid",
     theme: "grid",
     styles: { font: "times", fontSize: 10, cellPadding: 1.6, lineColor: [0, 0, 0], lineWidth: 0.2, textColor: 0 },
     head: [[{ content: title, colSpan: 2, styles: { halign: "center", fillColor: [255, 255, 153], textColor: 0, fontStyle: "normal" } }]],
